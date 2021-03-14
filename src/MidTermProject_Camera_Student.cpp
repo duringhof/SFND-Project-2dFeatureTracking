@@ -82,21 +82,22 @@ int main(int argc, const char *argv[])
           detKeypointsModern(keypoints, imgGray, detectorType, false);
         }
 
-        //// STUDENT ASSIGNMENT
-        //// TASK MP.3 -> only keep keypoints on the preceding vehicle
-
         // only keep keypoints on the preceding vehicle
         bool bFocusOnVehicle = true;
         cv::Rect vehicleRect(535, 180, 180, 150);
-        if (bFocusOnVehicle)
-        {
-            // ...
+        if (bFocusOnVehicle) {
+
+          vector<cv::KeyPoint> keypointsOfInterest;
+          for (auto it=keypoints.begin(); it!=keypoints.end(); ++it) {
+            if (vehicleRect.contains(it->pt)) {
+              keypointsOfInterest.push_back(*it);
+            }
+          }
+          keypoints = keypointsOfInterest;
         }
 
-        //// EOF STUDENT ASSIGNMENT
-
         // optional : limit number of keypoints (helpful for debugging and learning)
-        bool bLimitKpts = true;
+        bool bLimitKpts = false;
         if (bLimitKpts)
         {
             int maxKeypoints = 10;
