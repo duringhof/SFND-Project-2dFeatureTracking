@@ -39,8 +39,14 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource,
   } else if (selectorType.compare("SEL_KNN") ==
              0) { // k nearest neighbors (k=2)
 
-    // ...
+    vector<vector<cv::DMatch>> kmatches;
+    matcher->knnMatch(descSource, descRef, kmatches, 2);
+    for (auto kmatch : kmatches) {
+      if (kmatch.size() == 2 && kmatch[0].distance < 0.8 * kmatch[1].distance) {
+        matches.push_back(kmatch[0]);
+      }
     }
+  }
 }
 
 // Use one of several types of state-of-art descriptors to uniquely identify keypoints

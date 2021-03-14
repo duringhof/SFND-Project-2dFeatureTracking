@@ -45,6 +45,7 @@ int main(int argc, const char *argv[])
     string descriptorType = "BRIEF";          // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
     string matcherType = "MAT_BF";            // MAT_BF, MAT_FLANN
     string descriptorDataType = "DES_BINARY"; // DES_BINARY, DES_HOG
+    string selectorType = "SEL_NN";           // SEL_NN, SEL_KNN
 
     /* MAIN LOOP OVER ALL IMAGES */
 
@@ -135,16 +136,9 @@ int main(int argc, const char *argv[])
 
           vector<cv::DMatch> matches;
 
-          string selectorType = "SEL_NN";       // SEL_NN, SEL_KNN
-
-          //// STUDENT ASSIGNMENT
-          //// TASK MP.6 -> add KNN match selection and perform descriptor distance ratio filtering with t=0.8 in file matching2D.cpp
-
           matchDescriptors((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints,
                            (dataBuffer.end() - 2)->descriptors, (dataBuffer.end() - 1)->descriptors,
                            matches, descriptorDataType, matcherType, selectorType);
-
-          //// EOF STUDENT ASSIGNMENT
 
           // store matches in current data frame
           (dataBuffer.end() - 1)->kptMatches = matches;
