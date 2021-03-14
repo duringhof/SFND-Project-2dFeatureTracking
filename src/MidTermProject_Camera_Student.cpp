@@ -41,8 +41,10 @@ int main(int argc, const char *argv[])
     bool bVis = false;            // visualize results
 
     // select methods
-    string detectorType = "FAST"; // SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, (SIFT) 
-    string descriptorType = "BRIEF"; // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
+    string detectorType = "FAST";             // SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, (SIFT)
+    string descriptorType = "BRIEF";          // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
+    string matcherType = "MAT_BF";            // MAT_BF, MAT_FLANN
+    string descriptorDataType = "DES_BINARY"; // DES_BINARY, DES_HOG
 
     /* MAIN LOOP OVER ALL IMAGES */
 
@@ -127,51 +129,49 @@ int main(int argc, const char *argv[])
 
         cout << "#3 : EXTRACT DESCRIPTORS done" << endl;
 
-        if (dataBuffer.size() > 1) // wait until at least two images have been processed
-        {
+        if (dataBuffer.size() > 1) {
 
-            /* MATCH KEYPOINT DESCRIPTORS */
+          /* MATCH KEYPOINT DESCRIPTORS */
 
-            vector<cv::DMatch> matches;
-            string matcherType = "MAT_BF";        // MAT_BF, MAT_FLANN
-            string descriptorType = "DES_BINARY"; // DES_BINARY, DES_HOG
-            string selectorType = "SEL_NN";       // SEL_NN, SEL_KNN
+          vector<cv::DMatch> matches;
 
-            //// STUDENT ASSIGNMENT
-            //// TASK MP.5 -> add FLANN matching in file matching2D.cpp
-            //// TASK MP.6 -> add KNN match selection and perform descriptor distance ratio filtering with t=0.8 in file matching2D.cpp
+          string selectorType = "SEL_NN";       // SEL_NN, SEL_KNN
 
-            matchDescriptors((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints,
-                             (dataBuffer.end() - 2)->descriptors, (dataBuffer.end() - 1)->descriptors,
-                             matches, descriptorType, matcherType, selectorType);
+          //// STUDENT ASSIGNMENT
+          //// TASK MP.6 -> add KNN match selection and perform descriptor distance ratio filtering with t=0.8 in file matching2D.cpp
 
-            //// EOF STUDENT ASSIGNMENT
+          matchDescriptors((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints,
+                           (dataBuffer.end() - 2)->descriptors, (dataBuffer.end() - 1)->descriptors,
+                           matches, descriptorDataType, matcherType, selectorType);
 
-            // store matches in current data frame
-            (dataBuffer.end() - 1)->kptMatches = matches;
+          //// EOF STUDENT ASSIGNMENT
 
-            cout << "#4 : MATCH KEYPOINT DESCRIPTORS done" << endl;
+          // store matches in current data frame
+          (dataBuffer.end() - 1)->kptMatches = matches;
 
-            // visualize matches between current and previous image
-            bVis = true;
-            if (bVis)
-            {
-                cv::Mat matchImg = ((dataBuffer.end() - 1)->cameraImg).clone();
-                cv::drawMatches((dataBuffer.end() - 2)->cameraImg, (dataBuffer.end() - 2)->keypoints,
-                                (dataBuffer.end() - 1)->cameraImg, (dataBuffer.end() - 1)->keypoints,
-                                matches, matchImg,
-                                cv::Scalar::all(-1), cv::Scalar::all(-1),
-                                vector<char>(), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+          cout << "#4 : MATCH KEYPOINT DESCRIPTORS done" << endl;
 
-                string windowName = "Matching keypoints between two camera images";
-                cv::namedWindow(windowName, 7);
-                cv::imshow(windowName, matchImg);
-                cout << "Press key to continue to next image" << endl;
-                cv::waitKey(0); // wait for key to be pressed
-            }
-            bVis = false;
+          // visualize matches between current and previous image
+          bVis = true;
+          if (bVis) {
+
+            cv::Mat matchImg = ((dataBuffer.end() - 1)->cameraImg).clone();
+            cv::drawMatches((dataBuffer.end() - 2)->cameraImg,
+                            (dataBuffer.end() - 2)->keypoints,
+                            (dataBuffer.end() - 1)->cameraImg,
+                            (dataBuffer.end() - 1)->keypoints, matches,
+                            matchImg, cv::Scalar::all(-1), cv::Scalar::all(-1),
+                            vector<char>(),
+                            cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+
+            string windowName = "Matching keypoints between two camera images";
+            cv::namedWindow(windowName, 7);
+            cv::imshow(windowName, matchImg);
+            cout << "Press key to continue to next image" << endl;
+            cv::waitKey(0); // wait for key to be pressed
+          }
+          bVis = false;
         }
-
     } // eof loop over all images
 
     return 0;

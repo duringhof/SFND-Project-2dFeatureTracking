@@ -4,33 +4,42 @@
 using namespace std;
 
 // Find best matches for keypoints in two camera images based on several matching methods
-void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::KeyPoint> &kPtsRef, cv::Mat &descSource, cv::Mat &descRef,
-                      std::vector<cv::DMatch> &matches, std::string descriptorType, std::string matcherType, std::string selectorType)
-{
-    // configure matcher
-    bool crossCheck = false;
-    cv::Ptr<cv::DescriptorMatcher> matcher;
+void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource,
+                      std::vector<cv::KeyPoint> &kPtsRef, cv::Mat &descSource,
+                      cv::Mat &descRef, std::vector<cv::DMatch> &matches,
+                      std::string descriptorDataType, std::string matcherType,
+                      std::string selectorType) {
 
-    if (matcherType.compare("MAT_BF") == 0)
-    {
-        int normType = cv::NORM_HAMMING;
-        matcher = cv::BFMatcher::create(normType, crossCheck);
+  // configure matcher
+  bool crossCheck = false;
+  cv::Ptr<cv::DescriptorMatcher> matcher;
+
+  if (matcherType.compare("MAT_BF") == 0) {
+
+    if (descriptorDataType.compare("DES_BINARY") == 0) {
+      matcher = cv::BFMatcher::create(cv::NORM_HAMMING, crossCheck);
+    } else if (descriptorDataType.compare("DES_HOG") == 0) {
+      matcher = cv::BFMatcher::create(cv::NORM_L2, crossCheck);
     }
-    else if (matcherType.compare("MAT_FLANN") == 0)
-    {
-        // ...
+    
+  } else if (matcherType.compare("MAT_FLANN") == 0) {
+
+    if (descriptorDataType.compare("DES_BINARY") == 0) {
+      // https://stackoverflow.com/questions/43830849/opencv-use-flann-with-orb-descriptors-to-match-features
+      matcher=cv::makePtr<cv::FlannBasedMatcher>(cv::makePtr<cv::flann::LshIndexParams>(12,20,2));
+    } else if (descriptorDataType.compare("DES_HOG") == 0) {
+      matcher = cv::FlannBasedMatcher::create();
     }
+  }
 
-    // perform matching task
-    if (selectorType.compare("SEL_NN") == 0)
-    { // nearest neighbor (best match)
+  // perform matching task
+  if (selectorType.compare("SEL_NN") == 0) { // nearest neighbor (best match)
 
-        matcher->match(descSource, descRef, matches); // Finds the best match for each descriptor in desc1
-    }
-    else if (selectorType.compare("SEL_KNN") == 0)
-    { // k nearest neighbors (k=2)
+    matcher->match(descSource, descRef, matches); // Finds the best match for each descriptor in desc1
+  } else if (selectorType.compare("SEL_KNN") ==
+             0) { // k nearest neighbors (k=2)
 
-        // ...
+    // ...
     }
 }
 
