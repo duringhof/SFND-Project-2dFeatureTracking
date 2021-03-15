@@ -138,7 +138,7 @@ if (selectorType.compare("SEL_NN") == 0) { // nearest neighbor (best match)
 
 #### Task MP.7 Performance Evaluation 1
 > Count the number of keypoints on the preceding vehicle for all 10 images and take note of the distribution of their neighborhood size. Do this for all the detectors you have implemented.
-```
+
 |         |1  |2  |3  |4  |5  |6  |7  |8  |9  |10 |
 |---------|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 |SHITOMASI|125|118|123|120|120|113|114|123|111|112|
