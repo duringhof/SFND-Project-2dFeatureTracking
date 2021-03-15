@@ -42,9 +42,9 @@ int main(int argc, const char *argv[]) {
   // select methods
   string detectorType = "FAST";             // SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, (SIFT)
   string descriptorType = "BRIEF";          // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
-  string matcherType = "MAT_BF";            // MAT_BF, MAT_FLANN
+  string matcherType = "MAT_FLANN";            // MAT_BF, MAT_FLANN
   string descriptorDataType = "DES_BINARY"; // DES_BINARY, DES_HOG
-  string selectorType = "SEL_NN";           // SEL_NN, SEL_KNN
+  string selectorType = "SEL_KNN";           // SEL_NN, SEL_KNN
 
   /* MAIN LOOP OVER ALL IMAGES */
 
@@ -121,7 +121,7 @@ int main(int argc, const char *argv[]) {
 
     // push keypoints and descriptor for current frame to end of data buffer
     (dataBuffer.end() - 1)->keypoints = keypoints;
-    cout << "#2 : DETECT KEYPOINTS done" << endl;
+    cout << "#2 : DETECT KEYPOINTS done, number of keypoints = " << keypoints.size() << endl;
 
     /* EXTRACT KEYPOINT DESCRIPTORS */
 

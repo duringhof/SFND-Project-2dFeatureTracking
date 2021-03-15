@@ -25,13 +25,11 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource,
     }
   } else if (matcherType.compare("MAT_FLANN") == 0) {
 
-    if (descriptorDataType.compare("DES_BINARY") == 0) {
-      // https://stackoverflow.com/questions/43830849/opencv-use-flann-with-orb-descriptors-to-match-features
-      matcher = cv::makePtr<cv::FlannBasedMatcher>(
-          cv::makePtr<cv::flann::LshIndexParams>(12, 20, 2));
-    } else if (descriptorDataType.compare("DES_HOG") == 0) {
-      matcher = cv::FlannBasedMatcher::create();
+    if (descSource.type() != CV_32F || descRef.type() != CV_32F) {
+      descSource.convertTo(descSource, CV_32F);
+      descRef.convertTo(descRef,CV_32F);
     }
+    matcher = cv::DescriptorMatcher::create(cv::DescriptorMatcher::FLANNBASED);
   }
 
   // perform matching task
