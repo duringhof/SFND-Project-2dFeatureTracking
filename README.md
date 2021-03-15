@@ -21,9 +21,9 @@ This README is created to meet this specification.
 
 ```c++
 // limit data frame buffer size by removing oldest frame
-    if(dataBuffer.size()>dataBufferSize){
-      dataBuffer.erase(dataBuffer.begin());
-    }
+if(dataBuffer.size()>dataBufferSize){
+  dataBuffer.erase(dataBuffer.begin());
+}
 ```
 ---
 
@@ -32,12 +32,12 @@ This README is created to meet this specification.
 
 ```c++
 if (detectorType.compare("SHITOMASI") == 0) {
-      detKeypointsShiTomasi(keypoints, imgGray, false);
-    } else if (detectorType.compare("HARRIS") == 0) {
-      detKeypointsHarris(keypoints, imgGray, false);
-    } else {
-      detKeypointsModern(keypoints, imgGray, detectorType, false);
-    }
+  detKeypointsShiTomasi(keypoints, imgGray, false);
+} else if (detectorType.compare("HARRIS") == 0) {
+  detKeypointsHarris(keypoints, imgGray, false);
+} else {
+  detKeypointsModern(keypoints, imgGray, detectorType, false);
+}
 ```
 Actual detector implementations can be read in matching2D_Student.cpp
 ---
