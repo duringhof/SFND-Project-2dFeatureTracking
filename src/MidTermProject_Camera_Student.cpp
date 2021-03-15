@@ -40,14 +40,15 @@ int main(int argc, const char *argv[]) {
   bool bVis = false;            // visualize results
 
   // select methods
-  string detectorType = "FAST";             // SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, (SIFT)
-  string descriptorType = "BRIEF";          // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
-  string matcherType = "MAT_FLANN";            // MAT_BF, MAT_FLANN
-  string descriptorDataType = "DES_BINARY"; // DES_BINARY, DES_HOG
+  string detectorType = "SHITOMASI";             // SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, (SIFT)
+  string descriptorType = "BRISK";          // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
+  string matcherType = "MAT_BF";            // MAT_BF, MAT_FLANN
+  string descriptorDataType = "DES_HOG"; // DES_BINARY, DES_HOG
   string selectorType = "SEL_KNN";           // SEL_NN, SEL_KNN
 
   /* MAIN LOOP OVER ALL IMAGES */
 
+  vector<float> loggedTimes;
   for (size_t imgIndex = 0; imgIndex <= imgEndIndex - imgStartIndex;
        imgIndex++) {
 
@@ -73,20 +74,21 @@ int main(int argc, const char *argv[]) {
       dataBuffer.erase(dataBuffer.begin());
     }
 
-    cout << "#1 : LOAD IMAGE INTO BUFFER done, current BUFFER size is "
-         << dataBuffer.size() << endl;
+    //cout << "#1 : LOAD IMAGE INTO BUFFER done, current BUFFER size is "
+    //     << dataBuffer.size() << endl;
     
     /* DETECT IMAGE KEYPOINTS */
 
     // extract 2D keypoints from current image
     vector<cv::KeyPoint> keypoints;
+    float detectorTime;
     
     if (detectorType.compare("SHITOMASI") == 0) {
-      detKeypointsShiTomasi(keypoints, imgGray, false);
+      detectorTime = detKeypointsShiTomasi(keypoints, imgGray, false);
     } else if (detectorType.compare("HARRIS") == 0) {
-      detKeypointsHarris(keypoints, imgGray, false);
+      detectorTime = detKeypointsHarris(keypoints, imgGray, false);
     } else {
-      detKeypointsModern(keypoints, imgGray, detectorType, false);
+      detectorTime = detKeypointsModern(keypoints, imgGray, detectorType, false);
     }
 
     // only keep keypoints on the preceding vehicle
@@ -121,12 +123,13 @@ int main(int argc, const char *argv[]) {
 
     // push keypoints and descriptor for current frame to end of data buffer
     (dataBuffer.end() - 1)->keypoints = keypoints;
-    cout << "#2 : DETECT KEYPOINTS done, number of keypoints = " << keypoints.size() << endl;
+    //cout << "#2 : DETECT KEYPOINTS done, number of keypoints = " << keypoints.size() << endl;
 
     /* EXTRACT KEYPOINT DESCRIPTORS */
 
     cv::Mat descriptors;
-    descKeypoints((dataBuffer.end() - 1)->keypoints,
+    float descriptorTime;
+    descriptorTime = descKeypoints((dataBuffer.end() - 1)->keypoints,
                   (dataBuffer.end() - 1)->cameraImg, descriptors,
                   descriptorType);
     
@@ -134,7 +137,7 @@ int main(int argc, const char *argv[]) {
     // push descriptors for current frame to end of data buffer
     (dataBuffer.end() - 1)->descriptors = descriptors;
 
-    cout << "#3 : EXTRACT DESCRIPTORS done" << endl;
+    // cout << "#3 : EXTRACT DESCRIPTORS done" << endl;
 
     if (dataBuffer.size() > 1) {
 
@@ -150,10 +153,10 @@ int main(int argc, const char *argv[]) {
       // store matches in current data frame
       (dataBuffer.end() - 1)->kptMatches = matches;
 
-      cout << "#4 : MATCH KEYPOINT DESCRIPTORS done" << endl;
+      cout << "#4 : MATCH KEYPOINT DESCRIPTORS done,  number of matches = " << matches.size() << endl;
 
       // visualize matches between current and previous image
-      bVis = true;
+      bVis = false;
       if (bVis) {
 
         cv::Mat matchImg = ((dataBuffer.end() - 1)->cameraImg).clone();
@@ -172,8 +175,17 @@ int main(int argc, const char *argv[]) {
       }
       bVis = false;
     }
+    loggedTimes.push_back(detectorTime + descriptorTime);
   }
   // eof loop over all images
+
+  float avgLoggedTime = 0;
+  for (auto itr : loggedTimes) {
+    avgLoggedTime += itr;
+  }
+  avgLoggedTime /= loggedTimes.size();
+
+  cout << "Average time for keypoint detection and descriptor extraction was " << avgLoggedTime << endl;
 
   return 0;
 }
