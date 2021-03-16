@@ -39,8 +39,8 @@ int main(int argc, const char *argv[]) {
   bool bVis = false;            // visualize results
 
   // select methods
-  vector<string> detectorTypeList{"SHITOMASI", "HARRIS", "FAST", "BRISK", "ORB", "AKAZE"};//, "SIFT"};
-  vector<string> descriptorTypeList{"BRISK", "BRIEF", "ORB", "FREAK"};//, "AKAZE", "SIFT"};
+  vector<string> detectorTypeList{"SHITOMASI", "HARRIS", "FAST", "BRISK", "ORB", "AKAZE", "SIFT"};
+  vector<string> descriptorTypeList{"BRISK", "BRIEF", "ORB", "FREAK", "SIFT"};//, "AKAZE"};
   string matcherType = "MAT_BF";            // MAT_BF, MAT_FLANN
   string descriptorDataType = "DES_HOG"; // DES_BINARY, DES_HOG
   string selectorType = "SEL_KNN";       // SEL_NN, SEL_KNN

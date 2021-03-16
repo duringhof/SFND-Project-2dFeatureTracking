@@ -74,15 +74,15 @@ float descKeypoints(vector<cv::KeyPoint> &keypoints, cv::Mat &img,
   } else if (descriptorType.compare("AKAZE") == 0) {
     extractor = cv::AKAZE::create();
   } else if (descriptorType.compare("SIFT") == 0) {
-    //extractor = cv::xfeatures2d::SIFT::create();
+    extractor = cv::xfeatures2d::SIFT::create();
   }
     
   // perform feature description
   double t = (double)cv::getTickCount();
   extractor->compute(img, keypoints, descriptors);
   t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
-  // cout << descriptorType << " descriptor extraction in " << 1000 * t / 1.0
-  //     << " ms" << endl;
+  cout << descriptorType << " descriptor extraction in " << 1000 * t / 1.0
+       << " ms" << endl;
   return 1000 * t / 1.0;
 }
 
@@ -115,8 +115,8 @@ float detKeypointsShiTomasi(vector<cv::KeyPoint> &keypoints, cv::Mat &img,
     keypoints.push_back(newKeyPoint);
   }
   t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
-  //cout << "Shi-Tomasi detection with n=" << keypoints.size() << " keypoints in "
-  //     << 1000 * t / 1.0 << " ms" << endl;
+  cout << "Shi-Tomasi detection with n=" << keypoints.size() << " keypoints in "
+       << 1000 * t / 1.0 << " ms" << endl;
   
   // visualize results
   if (bVis) {
@@ -188,8 +188,8 @@ float detKeypointsHarris(vector<cv::KeyPoint> &keypoints, cv::Mat &img,
     }
   }
   t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
-  //cout << "Harris detection with n=" << keypoints.size() << " keypoints in "
-  //     << 1000 * t / 1.0 << " ms" << endl;
+  cout << "Harris detection with n=" << keypoints.size() << " keypoints in "
+       << 1000 * t / 1.0 << " ms" << endl;
   
   // visualize results
   if (bVis) {
@@ -224,7 +224,7 @@ float detKeypointsModern(vector<cv::KeyPoint> &keypoints, cv::Mat &img,
   } else if (detectorType.compare("AKAZE") == 0) {
     detector = cv::AKAZE::create();
   } else if (detectorType.compare("SIFT") == 0) {
-    //detector = cv::xfeatures2d::SIFT::create();
+    detector = cv::xfeatures2d::SIFT::create();
   }
 
   // perform selected keypoint detection
@@ -232,8 +232,8 @@ float detKeypointsModern(vector<cv::KeyPoint> &keypoints, cv::Mat &img,
   detector->detect(img, keypoints);
   t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
 
-  //cout << detectorType << " detection with n=" << keypoints.size()
-  //     << " keypoints in " << 1000 * t / 1.0 << " ms" << endl;
+  cout << detectorType << " detection with n=" << keypoints.size()
+       << " keypoints in " << 1000 * t / 1.0 << " ms" << endl;
   
   // visualize results
   if (bVis) {
