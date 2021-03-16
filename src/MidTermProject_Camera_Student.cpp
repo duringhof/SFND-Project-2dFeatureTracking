@@ -51,6 +51,10 @@ int main(int argc, const char *argv[]) {
 
     for (string descriptorType : descriptorTypeList) {
 
+      if (detectorType == "SIFT" && descriptorType == "ORB") {
+        break;
+      }
+
       vector<DataFrame> dataBuffer; // list of data frames which are held in memory at the same time
 
       // declare logging variables
